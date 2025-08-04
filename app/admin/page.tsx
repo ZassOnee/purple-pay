@@ -30,16 +30,24 @@ export default function AdminPage() {
   }, [])
 
   const saveData = async (updated: any) => {
-    setStatus('Menyimpan...')
-    const { error } = await supabase
-      .from('sites')
-      .update({ detail: updated })
-      .eq('site_id', ConfigSB.supabase.siteid)
+  setStatus('Menyimpan...')
 
-    if (!error) {
-      setData(updated)
-      setStatus('✅ Berhasil disimpan!')
-    } else setStatus('❌ Gagal menyimpan.')
+  const { error } = await supabase
+    .from('sites')
+    .upsert([
+      {
+        site_id: ConfigSB.supabase.siteid,
+        detail: updated
+      }
+    ])
+
+  if (!error) {
+    setData(updated)
+    setStatus('✅ Berhasil disimpan!')
+  } else {
+    console.error('❌ Error Supabase:', error)
+    setStatus(`❌ Gagal menyimpan: ${error.message}`)
+  }
   }
 
   const handleAdd = async (e: any) => {
