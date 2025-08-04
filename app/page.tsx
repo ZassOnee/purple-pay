@@ -83,7 +83,6 @@ export default function HomePage() {
       {open && selectedMethod && data[selectedMethod] && (
         <Modal
           method={data[selectedMethod]}
-          title={data[selectedMethod].nama || selectedMethod}
           onClose={handleCloseModal}
         />
       )}
