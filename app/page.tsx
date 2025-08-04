@@ -14,17 +14,27 @@ export default function HomePage() {
   const [data, setData] = useState<any>(null)
   const [open, setOpen] = useState(false)
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchData() {
-      const { data, error } = await supabase
-        .from('sites')
-        .select('*')
-        .eq('site_id', ConfigSB.supabase.siteid) // GANTI SESUAI ID WEBSITE INI
-        .single()
+      try {
+        const { data, error } = await supabase
+          .from('sites')
+          .select('*')
+          .eq('site_id', ConfigSB.supabase.siteid)
+          .single()
 
-      if (error) console.error('Gagal ambil data:', error)
-      else setData(data.detail)
+        if (error || !data?.detail) {
+          setError('Belum ada data pembayaran tersedia.')
+          return
+        }
+
+        setData(data.detail)
+      } catch (e) {
+        console.error(e)
+        setError('Gagal memuat data.')
+      }
     }
 
     fetchData()
@@ -41,6 +51,7 @@ export default function HomePage() {
     document.body.style.overflow = 'auto'
   }
 
+  if (error) return <div className="loading">{error}</div>
   if (!data) return <div className="loading">Memuat data...</div>
 
   return (
@@ -81,12 +92,12 @@ export default function HomePage() {
       </div>
 
       {open && selectedMethod && data[selectedMethod] && (
-  <Modal
-    open={open}
-    method={data[selectedMethod]}
-    onClose={handleCloseModal}
-  />
-)}
+        <Modal
+          open={open}
+          method={data[selectedMethod]}
+          onClose={handleCloseModal}
+        />
+      )}
     </main>
   )
 }
