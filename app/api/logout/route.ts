@@ -1,11 +1,13 @@
 // app/api/logout/route.ts
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
-  const res = NextResponse.redirect('/login')
+export const dynamic = 'force-dynamic' // cegah prerender error
+
+export async function GET(req: NextRequest) {
+  const res = NextResponse.redirect(new URL('/login', req.url)) // ✅ fix relative path
   res.cookies.set('auth_token', '', {
     maxAge: 0,
-    path: '/', // penting biar ngehapus dari semua path
+    path: '/', // tetap dipertahankan
   })
   return res
 }
