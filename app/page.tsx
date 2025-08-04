@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import { ConfigSB } from '@/data/config'
 import Modal from '@/app/components/payment-popup'
 
 const supabase = createClient(
-  'https://xxxx.supabase.co', // GANTI DENGAN URL KAMU
-  'public-anon-key' // GANTI DENGAN ANON PUBLIC KEY
+  ConfigSB.supabase.url,
+  ConfigSB.supabase.anonkey
 )
 
 export default function HomePage() {
@@ -19,7 +20,7 @@ export default function HomePage() {
       const { data, error } = await supabase
         .from('sites')
         .select('*')
-        .eq('site_id', 'site1') // GANTI SESUAI ID WEBSITE INI
+        .eq('site_id', ConfigSB.supabase.siteid) // GANTI SESUAI ID WEBSITE INI
         .single()
 
       if (error) console.error('Gagal ambil data:', error)
