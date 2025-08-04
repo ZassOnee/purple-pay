@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import Modal from '@/app/components/popup-payment'
+import Modal from '@/app/components/payment-popup'
 
 const supabase = createClient(
   'https://xxxx.supabase.co', // GANTI DENGAN URL KAMU
