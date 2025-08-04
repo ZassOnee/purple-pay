@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import Modal from '@/app/components/popup-payment'
 
 const supabase = createClient(
   'https://xxxx.supabase.co', // GANTI DENGAN URL KAMU
@@ -10,6 +11,8 @@ const supabase = createClient(
 
 export default function HomePage() {
   const [data, setData] = useState<any>(null)
+  const [open, setOpen] = useState(false)
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -25,6 +28,17 @@ export default function HomePage() {
 
     fetchData()
   }, [])
+
+  const handleOpenModal = (key: string) => {
+    setSelectedMethod(key)
+    setOpen(true)
+    document.body.style.overflow = 'hidden'
+  }
+
+  const handleCloseModal = () => {
+    setOpen(false)
+    document.body.style.overflow = 'auto'
+  }
 
   if (!data) return <div className="loading">Memuat data...</div>
 
@@ -48,7 +62,7 @@ export default function HomePage() {
           {Object.entries(data).map(([key, val]: [string, any]) => {
             if (['nama', 'avatar', 'subjudul'].includes(key)) return null
             return (
-              <div className="method-card" key={key} onClick={() => showModal(key)}>
+              <div className="method-card" key={key} onClick={() => handleOpenModal(key)}>
                 <div className="method-logo" style={{ backgroundColor: val.bg || '#9d4edd' }}>
                   <i className={`fas ${val.icon || 'fa-wallet'}`} style={{ fontSize: '2.5rem', color: 'white' }} />
                 </div>
@@ -65,11 +79,13 @@ export default function HomePage() {
         </footer>
       </div>
 
-      {/* Modals (masih statis, nanti bisa dibuat dinamis juga jika kamu mau) */}
+      {open && selectedMethod && data[selectedMethod] && (
+        <Modal
+          method={data[selectedMethod]}
+          title={data[selectedMethod].nama || selectedMethod}
+          onClose={handleCloseModal}
+        />
+      )}
     </main>
   )
-}
-
-function showModal(id: string) {
-  alert(`Buka modal untuk metode: ${id}`)
 }
