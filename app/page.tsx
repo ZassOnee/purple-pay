@@ -81,11 +81,12 @@ export default function HomePage() {
       </div>
 
       {open && selectedMethod && data[selectedMethod] && (
-        <Modal
-          method={data[selectedMethod]}
-          onClose={handleCloseModal}
-        />
-      )}
+  <Modal
+    open={open}
+    method={data[selectedMethod]}
+    onClose={handleCloseModal}
+  />
+)}
     </main>
   )
 }
